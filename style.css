@@ -99,6 +99,19 @@
   display: flex;
 }
 
+#marker {
+  background-image: url('point.png');
+  background-size: cover;
+  width: 20px;
+  height: 27px;
+  cursor: pointer;
+}
+.mapboxgl-popup {
+  max-width: 200px;
+}
+
+
+
 @media only screen and (max-width: 990px) {
   .logo {
       width: 75px;

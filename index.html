@@ -53,13 +53,13 @@
 
       const map = new maplibregl.Map({
         container: 'map', // container id
-        style: `https://api.maptiler.com/maps/backdrop/style.json?key=${key}`, // style URL
-       // https://api.maptiler.com/maps/backdrop/style.json?key=
+        style: `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${key}`, // style URL
+       // https://api.maptiler.com/maps/outdoor-v2/style.json?key=YoGU9YwLrsWpj8Rvx5n6
         center: [50.29644, 53.23704], // starting position [lng, lat]
         zoom: 10, // starting zoom
       });
       map.addControl(new maplibregl.NavigationControl(), 'top-right');
-
+      get_markers();
      
   </script>
 
