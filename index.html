@@ -18,11 +18,11 @@
 <body>
     <div class="header" id="header">
       <div class="logo_text" style="display: flex;" >
-        <img alt="ToSamaraLogo" style="display:block; text-align:center" class="logo" src="marmot.png" back />
+        <img alt="ToSamaraLogo" style="display:block; text-align:center" class="logo" src="images/marmot.png" back />
         <p style="vertical-align:middle;">
-          <span style="display:block; text-align:center">Map</span>
-          <span style="display:block; text-align:center">Mot</span>
-          <span style="display:block; text-align:center">Move</span>
+          <span style="display:block; text-align:center;">MAP</span>
+          <span style="display:block; text-align:center">MOT</span>
+          <span style="display:block; text-align:center">MOVE</span>
         </p>
       </div>
       <div class="phone">
@@ -34,7 +34,7 @@
         <form>
           <div id="autocomplete" class="autocomplete">
             <input type="text" id="search_text" class="autocomplete-input" placeholder="Поиск...">
-            <button type="submit" id="submit" onclick="filterFunction(); return false;"></button>
+            <button type="submit" id="submit" onclick="filter_function(); return false;"></button>
 
             <ul class="autocomplete-results" id="input-list"></ul>
           </div>
@@ -49,14 +49,13 @@
   <script type="text/javascript" src="main.js"></script>
 
   <script>
-      const key = 'YoGU9YwLrsWpj8Rvx5n6';
+      const key = 'eRNoxJln1k0BwavChgme';
 
       const map = new maplibregl.Map({
-        container: 'map', // container id
-        style: `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${key}`, // style URL
-       // https://api.maptiler.com/maps/outdoor-v2/style.json?key=YoGU9YwLrsWpj8Rvx5n6
+        container: 'map', 
+        style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${key}`,    
         center: [50.29644, 53.23704], // starting position [lng, lat]
-        zoom: 10, // starting zoom
+        zoom: 10,
       });
       map.addControl(new maplibregl.NavigationControl(), 'top-right');
       get_markers();

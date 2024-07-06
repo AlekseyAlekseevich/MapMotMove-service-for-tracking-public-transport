@@ -24,7 +24,7 @@ async function data_stops(name_stop)
     }
 }
 
-async function load_stops_coord(){
+async function loading_stops_coordinates(){
     if (LOADED_STOPS)
         return LOADED_STOPS;
     let url = "https://tosamara.ru/api/v2/classifiers/stopsFullDB.xml";
@@ -41,19 +41,31 @@ async function load_stops_coord(){
 }
 
 async function get_markers() {
-    await load_stops_coord();
+    await loading_stops_coordinates();
     let stops_data = LOADED_STOPS.getElementsByTagName("stop");
-    let size = stops_data.length;
+    let size = LOADED_STOPS.getElementsByTagName("stop").length;
     for (let i = 0; i < size; i++) {
+        try{
+            var popup = new maplibregl.Popup({ offset: 25 }).setHTML(
+                `<a href="stops.html?id=${stops_data[i].getElementsByTagName("KS_ID")[0].childNodes[0].nodeValue}">` + 
+                stops_data[i].getElementsByTagName("title")[0].childNodes[0].nodeValue + "<br/> " + stops_data[i].getElementsByTagName("adjacentStreet")[0].childNodes[0].nodeValue 
+                + "\t " + stops_data[i].getElementsByTagName("direction")[0].childNodes[0].nodeValue + `</a>`
+            );
+        }
+        catch (err)
+        {
+            var popup = new maplibregl.Popup({ offset: 25 }).setHTML(
+                `<a href="stops.html?id=${stops_data[i].getElementsByTagName("KS_ID")[0].childNodes[0].nodeValue}">` + 
+                stops_data[i].getElementsByTagName("title")[0].childNodes[0].nodeValue + `</a>`
+            );
+        }
+
+        var el = document.createElement('div');
+        el.id = 'marker';
+
         let latitude = stops_data[i].getElementsByTagName("latitude")[0].childNodes[0].nodeValue;
         let longitude = stops_data[i].getElementsByTagName("longitude")[0].childNodes[0].nodeValue;
-        let popup = new maplibregl.Popup({ offset: 25 }).setHTML(
-            `<a href="stops.html?id=${stops_data[i].getElementsByTagName("KS_ID")[0].childNodes[0].nodeValue}">` +
-            stops_data[i].getElementsByTagName("title")[0].childNodes[0].nodeValue + `</a>`
-        );
-
-        let el = document.createElement('div');
-        el.id = 'marker';
+       
         new maplibregl.Marker(el)
             .setLngLat([longitude, latitude])
             .setPopup(popup)
@@ -61,9 +73,9 @@ async function get_markers() {
     }
 }
 
-function filterFunction() {
+function filter_function() {
     var input, filter, a, i;
-    loadDataInput(LOADED_STOPS, ListInputElement);
+    load_data_input(LOADED_STOPS, ListInputElement);
     input = document.getElementById("search_text");
     filter = input.value.toUpperCase();
     div = document.getElementById("input-list");
@@ -78,7 +90,7 @@ function filterFunction() {
     }
 }
 
-function loadDataInput(data, element) {
+function load_data_input(data, element) {
     if(data) {
         let innerElement = "";
         let stops_data = data.getElementsByTagName("stop");
@@ -105,5 +117,5 @@ InputElement.addEventListener("input", function() {
     if (InputElement.value === "")
         ListInputElement.innerHTML = "";
     else
-        filterFunction();
+    filter_function();
 });

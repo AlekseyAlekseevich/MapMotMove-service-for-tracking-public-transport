@@ -1,9 +1,9 @@
-const ListStops = document.querySelector("#stops-list");
+const ListTransport = document.querySelector("#transport-list");
+const StopName = document.querySelector("#name-stop");
+var LOADED_STOPS = null;
 
 var params = (new URL(document.location)).searchParams;
-var hull = params.get("hullNo");
-
-var LOADED_STOPS = null;
+var url_id = params.get("id");
 
 async function loading_stops_coordinates(){
     if (LOADED_STOPS)
@@ -20,7 +20,6 @@ async function loading_stops_coordinates(){
     catch(err) { console.log('err:', err); }
 }
 
-
 function get_stop_name(KS_ID)
 {
     let inner = "";
@@ -36,43 +35,34 @@ function get_stop_name(KS_ID)
 }
 
 
-async function stops_next(hullNo) {
-    let URL =`https://tosamara.ru/api/v2/xml?method=getTransportPosition&HULLNO=${hullNo}&os=android&clientid=test&authkey=${sha1(hullNo + "just_f0r_tests")}`    
+async function transport_forecast(stopID) {
+    let URL = `https://tosamara.ru/api/v2/xml?method=getFirstArrivalToStop&KS_ID=${stopID}&os=android&clientid=test&authkey=${sha1(stopID+"just_f0r_tests")}`    
     let res = await fetch(URL)
                 .then( response => response.text() ).then( str => {
                     let parser = new window.DOMParser();
                     return parser.parseFromString(str, "text/xml") 
                 });
+    console.log(res);
+    res = res.getElementsByTagName("transport");
+    //console.log(res);
     let innerElement = "";
-
-    console.log(res.getElementsByTagName("nextStops")[0]);
-    res = res.getElementsByTagName("nextStops")[0].getElementsByTagName("stop");
-    
-    console.log(res[0].getElementsByTagName("KS_ID")[0].textContent);
-    console.log(res.length);
-    let KS_ID = 0;
     for (let i = 0; i < res.length; i++)
     {
-        KS_ID = res[i].getElementsByTagName("KS_ID")[0].textContent;
-        console.log(KS_ID);
-        let nameKS = get_stop_name(KS_ID);
-        innerElement += `<a href="stops.html?id=${KS_ID}">` + nameKS + "  " +
-            "<br/>" + Math.ceil(res[i].getElementsByTagName("time")[0].textContent/60) + " минут(ы)" + "<br/>" + "<hr/>"+  `</a>`;
+        innerElement += `<a href="route.html?hullNo=${res[i].getElementsByTagName("hullNo")[0].childNodes[0].nodeValue}">` + 
+            res[i].getElementsByTagName("number")[0].childNodes[0].nodeValue + "  " + res[i].getElementsByTagName("type")[0].childNodes[0].nodeValue +   
+            "<br/>" + res[i].getElementsByTagName("time")[0].childNodes[0].nodeValue + " Минут" + "<br/>" + "<hr/>"+  `</a>`;
+        console.log(innerElement);
     }
-
-    console.log(innerElement);
-
     if (innerElement === "")
-        innerElement = "<h3>Остановки отсутствуют</h3>";
-    ListStops.innerHTML = innerElement;
+        innerElement = "<h3>Транспорт отсутствует</h3>";
+    ListTransport.innerHTML = innerElement;
 }
-
 
 async function download()
 { 
-    await loading_stops_coordinates()
-    //console.log(LOADED_STOPS);
-    stops_next(hull);
+    await loading_stops_coordinates();
+    StopName.innerHTML = get_stop_name(url_id);
+    transport_forecast(url_id);
 }
 
 download();
